@@ -10,7 +10,6 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 const paystack_module_1 = require("./paystack.module");
 let AppModule = class AppModule {
@@ -21,16 +20,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-            }),
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: process.env.DB_HOST || 'localhost',
-                port: parseInt(process.env.DB_PORT || '5432', 10),
-                username: process.env.DB_USERNAME || 'postgres',
-                password: process.env.DB_PASSWORD || 'postgres',
-                database: process.env.DB_DATABASE || 'paystack_db',
-                entities: [],
-                synchronize: true,
+                envFilePath: '../.env',
             }),
             paystack_module_1.PaystackModule,
         ],

@@ -35,6 +35,27 @@ let PaystackController = class PaystackController {
     verifyPayment(reference) {
         return this.paystackService.verifyPayment(reference);
     }
+    async handleCallback(reference, res) {
+        const verification = await this.paystackService.verifyPayment(reference);
+        if (verification?.data?.status === 'success') {
+            res.redirect(`/paystack/payment-success?ref=${reference}`);
+        }
+        else {
+            res.redirect(`/paystack/payment-failure?ref=${reference}`);
+        }
+    }
+    paymentSuccess(ref) {
+        return {
+            message: 'Payment successful!',
+            reference: ref,
+        };
+    }
+    paymentFailure(ref) {
+        return {
+            message: 'Payment failed or was cancelled.',
+            reference: ref,
+        };
+    }
 };
 exports.PaystackController = PaystackController;
 __decorate([
@@ -44,7 +65,7 @@ __decorate([
         status: 201,
         description: 'Payment initialized successfully.',
     }),
-    __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [initialize_payment_dto_1.InitializePaymentDto]),
     __metadata("design:returntype", Promise)
@@ -70,6 +91,37 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PaystackController.prototype, "verifyPayment", null);
+__decorate([
+    (0, common_1.Get)('callback'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Handle Paystack callback for transaction verification',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 302,
+        description: 'Redirects to a success or failure page.',
+    }),
+    __param(0, (0, common_1.Query)('reference')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PaystackController.prototype, "handleCallback", null);
+__decorate([
+    (0, common_1.Get)('payment-success'),
+    (0, swagger_1.ApiOperation)({ summary: 'Display a payment success message' }),
+    __param(0, (0, common_1.Query)('ref')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PaystackController.prototype, "paymentSuccess", null);
+__decorate([
+    (0, common_1.Get)('payment-failure'),
+    (0, swagger_1.ApiOperation)({ summary: 'Display a payment failure message' }),
+    __param(0, (0, common_1.Query)('ref')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PaystackController.prototype, "paymentFailure", null);
 exports.PaystackController = PaystackController = __decorate([
     (0, swagger_1.ApiTags)('Paystack'),
     (0, common_1.Controller)('paystack'),
